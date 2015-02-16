@@ -50,7 +50,7 @@ float3 GetInstanceTranslation(int i){ return g_instance_buffer[i].translation; }
 float4 GetInstanceRotation(int i)   { return g_instance_buffer[i].rotation; }
 float  GetInstanceScale(int i)      { return g_instance_buffer[i].scale; }
 float  GetInstanceTime(int i)       { return g_instance_buffer[i].time; }
-float  GetInstanceID(int i)         { return g_instance_buffer[i].id; }
+float  GetObjectID(int i)           { return g_instance_buffer[i].id; }
 
 #else // WITH_STRUCTURED_BUFFER
 
@@ -58,7 +58,7 @@ float3 GetInstanceTranslation(int i){ return 0.0; }
 float4 GetInstanceRotation(int i)   { return 0.0; }
 float3 GetInstanceScale(int i)      { return 0.0; }
 float  GetInstanceTime(int i)       { return 0.0; }
-float  GetInstanceID(int i)         { return 0.0; }
+float  GetObjectID(int i)         { return 0.0; }
 
 #endif // WITH_STRUCTURED_BUFFER
 
@@ -90,17 +90,18 @@ struct my_vs_out
     float3 normal : TEXCOORD2;
     float3 local_position : TEXCOORD3;
     float3 local_normal : TEXCOORD4;
-    float2 texcoord : TEXCOORD5;
+    float4 instance_pos : TEXCOORD5;
+    float4 params : TEXCOORD6;
 };
 
 float4 line_color;
 
 my_vs_out vert(appdata_full v)
 {
-    int iid = GetInstanceID(v.texcoord.xy);
+    int iid = GetInstanceID(v.texcoord1.xy);
 
     my_vs_out o;
-    o.local_position = v.vertex.xyz * GetInstanceScale(iid);
+    o.local_position = v.vertex.xyz * GetInstanceScale(iid) + hash(GetObjectID(iid))*10.0;
     o.local_normal = v.normal.xyz;
 
     ApplyInstanceTransform(v.texcoord1.xy, v.vertex, v.normal);
@@ -110,17 +111,19 @@ my_vs_out vert(appdata_full v)
     o.screen_pos = vmvp;
     o.position = v.vertex;
     o.normal = v.normal.xyz;
-    o.texcoord = v.texcoord.xy;
+    o.instance_pos = float4(GetInstanceTranslation(iid), iid);
+    o.params = float4(GetObjectID(iid), GetInstanceTime(iid), 0.0, 0.0);
     return o;
 }
 
 ps_out frag(my_vs_out i)
 {
-    int iid = GetInstanceID(i.texcoord.xy);
+    float objid = i.params.x;
+    float objtime = i.params.y;
+
     float4 glow = _GlowColor;
 
-    float r = hash(GetInstanceID(iid));
-    float2 dg = boxcell((i.local_position.xyz+r)*0.1, i.local_normal.xyz);
+    float2 dg = boxcell((i.local_position.xyz)*0.1, i.local_normal.xyz);
 
     float pc = 1.0-clamp(1.0 - max(min(dg.x, 2.0)-1.0, 0.0)*2.0, 0.0, 1.0);
     float d = -length(i.position.xyz)*0.15 - dg.y*0.5;
@@ -128,8 +131,8 @@ ps_out frag(my_vs_out i)
     glow += line_color * vg * 1.5;
 
     float extrude = dg.y*4.0 - 4.0 + dg.x*0.5;
-    float3 sphere_pos = GetInstanceTranslation(iid);
-    float sphere_radius = GetInstanceTime(iid) * (3.0 + dg.y*0.2) + extrude;
+    float3 sphere_pos = i.instance_pos.xyz;
+    float sphere_radius = objtime * (3.0 + dg.y*0.2) + extrude;
     float3 s_normal = normalize(_WorldSpaceCameraPos.xyz - i.position.xyz);
     float3 pos_rel = i.position.xyz - sphere_pos;
     float s_dist = dot(pos_rel, s_normal);

@@ -18,7 +18,6 @@ public class CubeRoutine : MonoBehaviour
         for (int i = 0; i < m_instances.Length; ++i )
         {
             m_instances[i].id = GenID();
-            m_instances[i].rotation = Quaternion.identity;
         }
     }
 
