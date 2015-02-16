@@ -145,8 +145,9 @@ public class GPUParticleWorld : MonoBehaviour
     void Awake()
     {
         if (!SystemInfo.supportsComputeShaders) {
-            Debug.Log("GPUParticle: compute shader is not available.");
+            Debug.Log("GPUParticle: compute shader is not available. disabled.");
             gameObject.SetActive(false);
+            enabled = false;
             return;
         }
         kAddParticles = m_cs_core.FindKernel("AddParticles");

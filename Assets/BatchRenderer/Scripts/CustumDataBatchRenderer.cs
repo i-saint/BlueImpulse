@@ -18,6 +18,15 @@ public class CustumDataBatchRenderer<InstanceData> : BatchRendererBase
         }
     }
 
+    public void AddInstances(InstanceData[] v, int start=0, int length=0)
+    {
+        if (length == 0) length = v.Length;
+        int reserved_index;
+        int reserved_num;
+        ReserveInstance(length, out reserved_index, out reserved_num);
+        System.Array.Copy(v, start, m_instance_data, reserved_index, reserved_num);
+    }
+
     public InstanceData[] ReserveInstance(int num, out int reserved_index, out int reserved_num)
     {
         reserved_index = Interlocked.Add(ref m_instance_count, num) - num;

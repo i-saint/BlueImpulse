@@ -10,6 +10,8 @@ SubShader {
     Tags { "RenderType"="Opaque" "Queue"="Geometry" }
 
 CGINCLUDE
+#include "UnityCG.cginc"
+
 #define WITHOUT_COMMON_VERT_FRAG
 #include "../../DeferredShading/Shaders/Compat.cginc"
 #include "../../DeferredShading/Shaders/DS.cginc"
@@ -38,7 +40,7 @@ struct InstanceData
 {
     float3 translation;
     float4 rotation;
-    float3 scale;
+    float scale;
     float time;
     float id;
 };
@@ -46,7 +48,7 @@ StructuredBuffer<InstanceData> g_instance_buffer;
 
 float3 GetInstanceTranslation(int i){ return g_instance_buffer[i].translation; }
 float4 GetInstanceRotation(int i)   { return g_instance_buffer[i].rotation; }
-float3 GetInstanceScale(int i)      { return g_instance_buffer[i].scale; }
+float  GetInstanceScale(int i)      { return g_instance_buffer[i].scale; }
 float  GetInstanceTime(int i)       { return g_instance_buffer[i].time; }
 float  GetInstanceID(int i)         { return g_instance_buffer[i].id; }
 
@@ -88,28 +90,36 @@ struct my_vs_out
     float3 normal : TEXCOORD2;
     float3 local_position : TEXCOORD3;
     float3 local_normal : TEXCOORD4;
+    float2 texcoord : TEXCOORD5;
 };
 
 float4 line_color;
 
-my_vs_out vert(ia_out v)
+my_vs_out vert(appdata_full v)
 {
+    int iid = GetInstanceID(v.texcoord.xy);
+
     my_vs_out o;
+    o.local_position = v.vertex.xyz * GetInstanceScale(iid);
+    o.local_normal = v.normal.xyz;
+
+    ApplyInstanceTransform(v.texcoord1.xy, v.vertex, v.normal);
+
     float4 vmvp = mul(UNITY_MATRIX_VP, v.vertex);
     o.vertex = vmvp;
     o.screen_pos = vmvp;
-    o.position = mul(_Object2World, v.vertex);
-    o.normal = normalize(mul(_Object2World, float4(v.normal.xyz,0.0)).xyz);
-    o.local_position = v.vertex.xyz;
-    o.local_normal = v.normal.xyz;
+    o.position = v.vertex;
+    o.normal = v.normal.xyz;
+    o.texcoord = v.texcoord.xy;
     return o;
 }
 
 ps_out frag(my_vs_out i)
 {
+    int iid = GetInstanceID(i.texcoord.xy);
     float4 glow = _GlowColor;
 
-    float r = hash(GetInstanceID());
+    float r = hash(GetInstanceID(iid));
     float2 dg = boxcell((i.local_position.xyz+r)*0.1, i.local_normal.xyz);
 
     float pc = 1.0-clamp(1.0 - max(min(dg.x, 2.0)-1.0, 0.0)*2.0, 0.0, 1.0);
@@ -118,8 +128,8 @@ ps_out frag(my_vs_out i)
     glow += line_color * vg * 1.5;
 
     float extrude = dg.y*4.0 - 4.0 + dg.x*0.5;
-    float3 sphere_pos = GetInstancePosition();
-    float sphere_radius = GetInstanceTime() * (3.0 + dg.y*0.2) + extrude;
+    float3 sphere_pos = GetInstanceTranslation(iid);
+    float sphere_radius = GetInstanceTime(iid) * (3.0 + dg.y*0.2) + extrude;
     float3 s_normal = normalize(_WorldSpaceCameraPos.xyz - i.position.xyz);
     float3 pos_rel = i.position.xyz - sphere_pos;
     float s_dist = dot(pos_rel, s_normal);

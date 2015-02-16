@@ -10,13 +10,13 @@ public class BatchCubeRenderer : CustumDataBatchRenderer<BatchCubeRenderer.Insta
     [System.Serializable]
     public struct InstanceData
     {
-        public const int size = 48;
+        public const int size = 40;
 
-        public Vector3 position;
+        public Vector3 translation;
         public Quaternion rotation;
-        public Vector3 scale;
-        float local_time;
-        float id;
+        public float scale;
+        public float time;
+        public float id;
     }
 
 

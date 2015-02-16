@@ -3,7 +3,8 @@ using System.Collections;
 
 public class OuterCubes : CubeRoutine
 {
-    void Update()
+    public override void Update()
     {
+        base.Update();
     }
 }
