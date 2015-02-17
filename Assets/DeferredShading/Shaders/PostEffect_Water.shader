@@ -126,7 +126,7 @@ ps_out frag(vs_out i)
         float3 eye = normalize(_WorldSpaceCameraPos.xyz-i.world_pos.xyz);
         float2 tcoord = 0.0;
 
-        int MaxMarch = 12;
+        int MaxMarch = 16;
         float adv = g_raymarch_step * jitter(i.world_pos.xyz);
         float3 refdir = normalize(-eye + -reflect(-eye, n.xyz)*g_refraction);
         for(int k=0; k<MaxMarch; ++k) {
@@ -140,24 +140,26 @@ ps_out frag(vs_out i)
             if(reffragpos.w!=0 && reffragpos.w<tpos.z) {
                 break;
             }
-            if(tcoord.x>1.0 || tcoord.x<0.0 || tcoord.y>1.0 || tcoord.y<0.0) {
-                break;
-            }
         }
 
         float f1 = max(1.0-abs(dot(n, eye))-0.5, 0.0)*2.0;
         float f2 = 1.0-abs(dot(i.normal, eye));
 
-        float4 tp = SamplePosition(tcoord);
-        if(tp.y<0.0 || tp.w==0.0) {
-            r.color = SampleFrame(tcoord);
+        if(tcoord.x>1.0 || tcoord.x<0.0 || tcoord.y>1.0 || tcoord.y<0.0) {
+            r.color = 0.0;
         }
         else {
-            r.color = SampleFrame(coord);
+            float4 tp = SamplePosition(tcoord);
+            if(tp.y<0.0 || tp.w==0.0) {
+                r.color = SampleFrame(tcoord);
+            }
+            else {
+                r.color = SampleFrame(coord);
+            }
+            r.color *= 0.9;
+            r.color = r.color * max(1.0-adv*g_attenuation_by_distance, 0.0);
+            r.color += (f1 * f2) * g_fresnel * fade;
         }
-        r.color *= 0.9;
-        r.color = r.color * max(1.0-adv*g_attenuation_by_distance, 0.0);
-        r.color += (f1 * f2) * g_fresnel * fade;
     }
     {
         float _RayMarchDistance = 1.0;

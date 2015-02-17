@@ -28,10 +28,10 @@ public class PillerCubes : CubeRoutine
             {
                 int i = cubes_par_piller * pi + ci;
                 const float rxz = 0.75f;
-                const float ry = 5.0f;
+                const float ry = 10.0f;
                 m_instances[i].translation = base_pos[pi] + new Vector3(Random.Range(-rxz, rxz), Random.Range(-ry, ry), Random.Range(-rxz, rxz));
                 m_instances[i].scale = Random.Range(0.4f, 0.9f);
-                m_imd[i].speed = Random.Range(0.5f, 1.0f);
+                m_imd[i].speed = Random.Range(0.25f, 1.0f);
             }
         }
         base.OnEnable();
@@ -45,7 +45,7 @@ public class PillerCubes : CubeRoutine
             y += Time.deltaTime * m_imd[i].speed;
             if (y > 5.0f)
             {
-                y -= 10.0f;
+                y -= 20.0f;
             }
             m_instances[i].translation.y = y;
         }
