@@ -39,7 +39,8 @@ public class DSPEReflection : DSEffectBase
         if (m_render == null)
         {
             m_render = Render;
-            GetDSRenderer().AddCallbackPostEffect(m_render, 5000);
+            GetDSRenderer().AddCallbackPostLighting(m_render, 1050);
+            //GetDSRenderer().AddCallbackPostEffect(m_render, 5000);
             m_rt_temp = new RenderTexture[2];
         }
     }

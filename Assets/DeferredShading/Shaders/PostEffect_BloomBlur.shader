@@ -13,8 +13,9 @@ CGINCLUDE
 #include "Compat.cginc"
 
 sampler2D g_frame_buffer;
-sampler2D g_glow_buffer;
 float4 _Screen;
+float4 g_threshold;
+
 
 struct ia_out
 {
@@ -51,15 +52,15 @@ ps_out hblur(vs_out i)
     float Weight[5] = {0.05, 0.09, 0.12, 0.16, 0.16};
     float2 s = float2((_Screen.z)*1.39, 0.0);
     float4 c = 0.0;
-    c += tex2D(g_glow_buffer, coord - s*4.0) * Weight[0];
-    c += tex2D(g_glow_buffer, coord - s*3.0) * Weight[1];
-    c += tex2D(g_glow_buffer, coord - s*2.0) * Weight[2];
-    c += tex2D(g_glow_buffer, coord - s*1.0) * Weight[3];
-    c += tex2D(g_glow_buffer, coord        ) * Weight[4];
-    c += tex2D(g_glow_buffer, coord + s*1.0) * Weight[3];
-    c += tex2D(g_glow_buffer, coord + s*2.0) * Weight[2];
-    c += tex2D(g_glow_buffer, coord + s*3.0) * Weight[1];
-    c += tex2D(g_glow_buffer, coord + s*4.0) * Weight[0];
+    c += max(tex2D(g_frame_buffer, coord - s*4.0)-g_threshold, 0.0) * Weight[0];
+    c += max(tex2D(g_frame_buffer, coord - s*3.0)-g_threshold, 0.0) * Weight[1];
+    c += max(tex2D(g_frame_buffer, coord - s*2.0)-g_threshold, 0.0) * Weight[2];
+    c += max(tex2D(g_frame_buffer, coord - s*1.0)-g_threshold, 0.0) * Weight[3];
+    c += max(tex2D(g_frame_buffer, coord        )-g_threshold, 0.0) * Weight[4];
+    c += max(tex2D(g_frame_buffer, coord + s*1.0)-g_threshold, 0.0) * Weight[3];
+    c += max(tex2D(g_frame_buffer, coord + s*2.0)-g_threshold, 0.0) * Weight[2];
+    c += max(tex2D(g_frame_buffer, coord + s*3.0)-g_threshold, 0.0) * Weight[1];
+    c += max(tex2D(g_frame_buffer, coord + s*4.0)-g_threshold, 0.0) * Weight[0];
     ps_out r = {c};
     return r;
 }
@@ -74,15 +75,15 @@ ps_out vblur(vs_out i)
     float Weight[5] = {0.05, 0.09, 0.12, 0.16, 0.16};
     float2 s = float2(0.0, (_Screen.w)*1.0);
     float4 c = 0.0;
-    c += tex2D(g_glow_buffer, coord - s*4.0) * Weight[0];
-    c += tex2D(g_glow_buffer, coord - s*3.0) * Weight[1];
-    c += tex2D(g_glow_buffer, coord - s*2.0) * Weight[2];
-    c += tex2D(g_glow_buffer, coord - s*1.0) * Weight[3];
-    c += tex2D(g_glow_buffer, coord        ) * Weight[4];
-    c += tex2D(g_glow_buffer, coord + s*1.0) * Weight[3];
-    c += tex2D(g_glow_buffer, coord + s*2.0) * Weight[2];
-    c += tex2D(g_glow_buffer, coord + s*3.0) * Weight[1];
-    c += tex2D(g_glow_buffer, coord + s*4.0) * Weight[0];
+    c += max(tex2D(g_frame_buffer, coord - s*4.0)-g_threshold, 0.0) * Weight[0];
+    c += max(tex2D(g_frame_buffer, coord - s*3.0)-g_threshold, 0.0) * Weight[1];
+    c += max(tex2D(g_frame_buffer, coord - s*2.0)-g_threshold, 0.0) * Weight[2];
+    c += max(tex2D(g_frame_buffer, coord - s*1.0)-g_threshold, 0.0) * Weight[3];
+    c += max(tex2D(g_frame_buffer, coord        )-g_threshold, 0.0) * Weight[4];
+    c += max(tex2D(g_frame_buffer, coord + s*1.0)-g_threshold, 0.0) * Weight[3];
+    c += max(tex2D(g_frame_buffer, coord + s*2.0)-g_threshold, 0.0) * Weight[2];
+    c += max(tex2D(g_frame_buffer, coord + s*3.0)-g_threshold, 0.0) * Weight[1];
+    c += max(tex2D(g_frame_buffer, coord + s*4.0)-g_threshold, 0.0) * Weight[0];
     ps_out r = {c};
     return r;
 }

@@ -16,7 +16,7 @@ public class DSPECaustics : DSEffectBase
         if (m_render == null)
         {
             m_render = Render;
-            GetDSRenderer().AddCallbackPostGBuffer(m_render, 1100);
+            GetDSRenderer().AddCallbackPostLighting(m_render);
         }
     }
 
@@ -26,7 +26,6 @@ public class DSPECaustics : DSEffectBase
         if (!enabled || m_material==null) { return; }
 
         DSRenderer dsr = GetDSRenderer();
-        Graphics.SetRenderTarget(dsr.rtEmissionBuffer.colorBuffer, dsr.rtNormalBuffer.depthBuffer);
         m_material.SetTexture("g_position_buffer", dsr.rtPositionBuffer);
         m_material.SetTexture("g_normal_buffer", dsr.rtNormalBuffer);
         m_material.SetFloat("g_speed", m_speed);
@@ -36,6 +35,5 @@ public class DSPECaustics : DSEffectBase
         DSPECausticsEntity.GetInstances().ForEach((e) => {
             Graphics.DrawMeshNow(e.GetMesh(), e.GetMatrix());
         });
-        Graphics.SetRenderTarget(dsr.rtComposite);
     }
 }

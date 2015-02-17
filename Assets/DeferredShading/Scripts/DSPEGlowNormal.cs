@@ -18,7 +18,7 @@ public class DSPEGlowNormal : DSEffectBase
         if (m_render == null)
         {
             m_render = Render;
-            GetDSRenderer().AddCallbackPostEffect(m_render);
+            GetDSRenderer().AddCallbackPostLighting(m_render);
         }
     }
 

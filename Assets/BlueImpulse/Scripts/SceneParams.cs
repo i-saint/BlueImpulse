@@ -18,7 +18,7 @@ public class SceneParams : MonoBehaviour
             var w = m_effect_manager.GetComponent<DSPEWater>();
             c.m_intensity = 1.0f * m_water_brightness;
             w.m_reflection_intensity = 0.3f * m_water_brightness;
-            w.m_fresnel = 0.15f * m_water_brightness;
+            w.m_fresnel = 0.1f * m_water_brightness;
         }
         {
             var t = m_effect_manager.GetComponent<DSPERadialBlur>();

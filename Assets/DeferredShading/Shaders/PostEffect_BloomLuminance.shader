@@ -1,7 +1,8 @@
-﻿Shader "DeferredShading/PostEffect/BloomCombine" {
+﻿Shader "DeferredShading/PostEffect/BloomLuminance" {
 
 Properties {
-    g_intensity ("Intensity", Float) = 0.3
+    g_threshold ("threthold", Vector) = (0.5, 0.5, 0.5, 0.5)
+    g_scale ("scale", Vector) = (1.0, 1.0, 1.0, 1.0)
 }
 SubShader {
     Tags { "RenderType"="Opaque" }
@@ -14,10 +15,8 @@ CGINCLUDE
 #include "Compat.cginc"
 
 sampler2D g_frame_buffer;
-sampler2D g_half_frame_buffer;
-sampler2D g_quarter_frame_buffer;
-float4 g_intensity;
-
+float4 g_threshold;
+float4 g_scale;
 
 struct ia_out
 {
@@ -36,7 +35,7 @@ struct ps_out
 };
 
 
-vs_out vert (ia_out v)
+vs_out vert(ia_out v)
 {
     vs_out o;
     o.vertex = v.vertex;
@@ -44,21 +43,18 @@ vs_out vert (ia_out v)
     return o;
 }
 
-ps_out frag (vs_out i)
+ps_out frag(vs_out i)
 {
     float2 coord = (i.screen_pos.xy / i.screen_pos.w + 1.0) * 0.5;
-    // see: http://docs.unity3d.com/Manual/SL-PlatformDifferences.html
     #if UNITY_UV_STARTS_AT_TOP
         coord.y = 1.0-coord.y;
     #endif
 
-    float4 c = tex2D(g_frame_buffer, coord);
-    c += (tex2D(g_half_frame_buffer, coord) + tex2D(g_quarter_frame_buffer, coord)) * g_intensity;
-    c.w = 1.0;
-
+    float4 c = max(tex2D(g_frame_buffer, coord)-g_threshold, 0.0) * g_scale;
     ps_out r = {c};
     return r;
 }
+
 ENDCG
 
     Pass {

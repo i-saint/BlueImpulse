@@ -1,23 +1,18 @@
-﻿Shader "DeferredShading/PostEffect/BloomCombine" {
+﻿Shader "DeferredShading/CombineEmission" {
 
 Properties {
-    g_intensity ("Intensity", Float) = 0.3
+    g_intensity ("Intensity", Vector) = (1.0, 1.0, 1.0, 1.0)
 }
 SubShader {
     Tags { "RenderType"="Opaque" }
-    Blend Off
     ZTest Always
     ZWrite Off
     Cull Back
 
 CGINCLUDE
 #include "Compat.cginc"
-
-sampler2D g_frame_buffer;
-sampler2D g_half_frame_buffer;
-sampler2D g_quarter_frame_buffer;
+sampler2D g_emission_buffer;
 float4 g_intensity;
-
 
 struct ia_out
 {
@@ -36,32 +31,28 @@ struct ps_out
 };
 
 
-vs_out vert (ia_out v)
+vs_out vert(ia_out io)
 {
     vs_out o;
-    o.vertex = v.vertex;
-    o.screen_pos = v.vertex;
+    o.vertex = io.vertex;
+    o.screen_pos = io.vertex;
     return o;
 }
 
-ps_out frag (vs_out i)
+ps_out frag(vs_out vo)
 {
-    float2 coord = (i.screen_pos.xy / i.screen_pos.w + 1.0) * 0.5;
-    // see: http://docs.unity3d.com/Manual/SL-PlatformDifferences.html
+    float2 coord = (vo.screen_pos.xy / vo.screen_pos.w + 1.0) * 0.5;
     #if UNITY_UV_STARTS_AT_TOP
         coord.y = 1.0-coord.y;
     #endif
-
-    float4 c = tex2D(g_frame_buffer, coord);
-    c += (tex2D(g_half_frame_buffer, coord) + tex2D(g_quarter_frame_buffer, coord)) * g_intensity;
-    c.w = 1.0;
-
-    ps_out r = {c};
-    return r;
+    ps_out po = { tex2D(g_emission_buffer, coord)*g_intensity };
+    return po;
 }
 ENDCG
 
     Pass {
+        Blend One One
+
         CGPROGRAM
         #pragma vertex vert
         #pragma fragment frag
@@ -72,4 +63,5 @@ ENDCG
         ENDCG
     }
 }
+
 }

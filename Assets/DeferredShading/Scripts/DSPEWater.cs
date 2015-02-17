@@ -20,7 +20,8 @@ public class DSPEWater : DSEffectBase
         if (m_render == null)
         {
             m_render = Render;
-            GetDSRenderer().AddCallbackPostEffect(m_render, 5500);
+            GetDSRenderer().AddCallbackPostLighting(m_render, 1100);
+            //GetDSRenderer().AddCallbackPostEffect(m_render, 5150);
         }
     }
 
@@ -31,7 +32,6 @@ public class DSPEWater : DSEffectBase
 
         DSRenderer dsr = GetDSRenderer();
         dsr.CopyFramebuffer();
-        Graphics.SetRenderTarget(dsr.rtComposite.colorBuffer, dsr.rtNormalBuffer.depthBuffer);
         m_material.SetTexture("g_position_buffer", dsr.rtPositionBuffer);
         m_material.SetTexture("g_normal_buffer", dsr.rtNormalBuffer);
         m_material.SetFloat("g_speed", m_speed);
@@ -46,6 +46,5 @@ public class DSPEWater : DSEffectBase
         {
             Graphics.DrawMeshNow(e.GetMesh(), e.GetMatrix());
         });
-        Graphics.SetRenderTarget(dsr.rtComposite);
     }
 }

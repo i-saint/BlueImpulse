@@ -40,6 +40,7 @@ public class DSRenderer : MonoBehaviour
     public Material matFill;
     public Material matGBufferClear;
     public Material matCombine;
+    public Material matCombineEmission;
     public Mesh dummy_mesh;
 
     public Matrix4x4 prevViewProj;
@@ -194,6 +195,11 @@ public class DSRenderer : MonoBehaviour
         Graphics.SetRenderTarget(rtComposite);
     }
 
+    public void SetRenderTargetsCompositeWithDepth()
+    {
+        Graphics.SetRenderTarget(rtComposite.colorBuffer, rtNormalBuffer.depthBuffer);
+    }
+
     public RenderTexture CopyFramebuffer()
     {
         Graphics.Blit(rtComposite, rtCompositeBack);
@@ -251,12 +257,17 @@ public class DSRenderer : MonoBehaviour
             SetRenderTargetsGBuffer();
         }
 
-        Graphics.SetRenderTarget(rtComposite);
+        SetRenderTargetsComposite();
         GL.Clear(true, true, Color.black);
-        Graphics.SetRenderTarget(rtComposite.colorBuffer, rtNormalBuffer.depthBuffer);
+        SetRenderTargetsCompositeWithDepth();
 
         foreach (PriorityCallback cb in cbPreLighting) { cb.callback.Invoke(); }
         DSLight.RenderLights(this);
+
+        matCombineEmission.SetTexture("g_emission_buffer", rtEmissionBuffer);
+        matCombineEmission.SetPass(0);
+        DrawFullscreenQuad();
+
         foreach (PriorityCallback cb in cbPostLighting) { cb.callback.Invoke(); }
         foreach (PriorityCallback cb in cbTransparent) { cb.callback.Invoke(); }
         foreach (PriorityCallback cb in cbPostEffect) { cb.callback.Invoke(); }
