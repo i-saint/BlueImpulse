@@ -8,15 +8,14 @@ public class CameraControl : MonoBehaviour
 {
     public bool m_rotate_by_time = false;
     public float m_rotate_speed = -10.0f;
-    public Camera m_camera;
+    public Transform m_camera;
+    public Transform m_look_target;
+    Transform m_trans;
 
 
     void Awake()
     {
-        if (m_camera == null)
-        {
-            m_camera = GetComponent<Camera>();
-        }
+        m_trans = GetComponent<Transform>();
     }
 
     void Update()
@@ -28,7 +27,7 @@ public class CameraControl : MonoBehaviour
         Vector3 pos = m_camera.transform.position;
         if (m_rotate_by_time)
         {
-            pos = Quaternion.Euler(0.0f, Time.deltaTime * m_rotate_speed, 0) * pos;
+            m_trans.Rotate(Vector3.up, Time.deltaTime * m_rotate_speed);
         }
         if (Input.GetMouseButton(0))
         {
@@ -36,12 +35,16 @@ public class CameraControl : MonoBehaviour
             float rxz = Input.GetAxis("Mouse Y") * 0.25f;
             pos = Quaternion.Euler(0.0f, ry, 0) * pos;
             pos.y += rxz;
+            m_camera.transform.position = pos;
         }
         {
             float wheel = Input.GetAxis("Mouse ScrollWheel");
-            pos += pos.normalized * wheel * 4.0f;
+            if (wheel != 0.0f)
+            {
+                pos += pos.normalized * wheel * 4.0f;
+                m_camera.transform.position = pos;
+            }
         }
-        m_camera.transform.position = pos;
-        m_camera.transform.LookAt(new Vector3(0.0f, -2.0f, 0.0f));
+        m_camera.transform.LookAt(m_look_target.position);
     }
 }

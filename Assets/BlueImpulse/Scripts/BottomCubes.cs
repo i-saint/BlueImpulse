@@ -3,6 +3,8 @@ using System.Collections;
 
 public class BottomCubes : CubeRoutine
 {
+    public AnimationCurve m_curve;
+
     public struct IMD
     {
         public Vector3 base_pos;
