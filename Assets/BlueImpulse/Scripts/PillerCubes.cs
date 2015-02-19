@@ -17,7 +17,7 @@ public class PillerCubes : CubeRoutine
         m_imd = new IMD[cubes_par_piller * num_pillers];
 
         const float r1 = 9.0f;
-        const float r2 = 14.0f;
+        const float r2 = 16.0f;
         const float shift = 0.0f;
         Vector3[] base_pos = new Vector3[num_pillers] {
             new Vector3(Mathf.Cos((  0.0f+shift)*Mathf.Deg2Rad), 0.0f, Mathf.Sin((  0.0f+shift)*Mathf.Deg2Rad))*r1,

@@ -21,14 +21,4 @@ public class UIFadeParams : MonoBehaviour
         m_sound.color = new Color(1, 1, 1, m_sound_alpha);
         m_unity_logo.color = new Color(1, 1, 1, m_logo_alpha);
     }
-
-    public void Quit()
-    {
-
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
-    }
 }
