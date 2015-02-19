@@ -3,7 +3,7 @@
 Properties {
     _BaseColor ("BaseColor", Vector) = (0.15, 0.15, 0.2, 5.0)
     _GlowColor ("GlowColor", Vector) = (0.0, 0.0, 0.0, 0.0)
-    line_color ("LineColor", Vector) = (0.45, 0.4, 2.0, 0.0)
+    g_line_color ("LineColor", Vector) = (0.45, 0.4, 2.0, 0.0)
     _Gloss ("Gloss", Float) = 1.0
 }
 SubShader {
@@ -94,7 +94,8 @@ struct my_vs_out
     float4 params : TEXCOORD6;
 };
 
-float4 line_color;
+float4 g_line_color;
+float4 g_sphere_center;
 
 my_vs_out vert(appdata_full v)
 {
@@ -128,26 +129,24 @@ ps_out frag(my_vs_out i)
     float pc = 1.0-clamp(1.0 - max(min(dg.x, 2.0)-1.0, 0.0)*2.0, 0.0, 1.0);
     float d = -length(i.position.xyz)*0.15 - dg.y*0.5;
     float vg = max(0.0, frac(1.0-d*0.75-_Time.y*0.25)*3.0-2.0) * pc;
-    glow += line_color * vg * 1.5;
+    glow += g_line_color * vg * 1.5;
 
     float extrude = dg.y*4.0 - 4.0 + dg.x*0.5;
-    float3 sphere_pos = i.instance_pos.xyz;
-    float sphere_radius = objtime * (3.0 + dg.y*0.2) + extrude;
+    float3 sphere_pos = g_sphere_center;
+    float sphere_radius = objtime*4.0 + extrude;
     float3 s_normal = normalize(_WorldSpaceCameraPos.xyz - i.position.xyz);
     float3 pos_rel = i.position.xyz - sphere_pos;
-    float s_dist = dot(pos_rel, s_normal);
+    float s_dist = abs(dot(pos_rel, s_normal));
     float3 pos_proj = i.position.xyz - s_dist*s_normal;
     float dist_proj = length(pos_proj-sphere_pos);
     if(dist_proj>sphere_radius) {
         discard;
     }
 
-    float l = (1.0-pc)*0.1+0.9;
-
     ps_out o;
     float len = length(pos_rel);
     if(len<sphere_radius) {
-        o.normal = float4(i.normal.xyz, _Gloss*l);
+        o.normal = float4(i.normal.xyz, _Gloss);
         o.position = float4(i.position.xyz, i.screen_pos.z);
     }
     else {
@@ -158,13 +157,13 @@ ps_out frag(my_vs_out i)
         float3 dir = normalize(ps-sphere_pos);
         float3 pos = sphere_pos+dir*sphere_radius;
         float4 spos = mul(UNITY_MATRIX_VP, float4(pos,1.0));
-        o.normal = float4(dir, _Gloss*l);
+        o.normal = float4(dir, _Gloss);
         o.position = float4(pos, spos.z);
     }
     glow.rgb += float3(0.2, 0.2, 0.7) * max(1.0 - abs(dist_proj-sphere_radius), 0.0)*4.0;
 
 
-    o.color = _BaseColor * l;
+    o.color = _BaseColor;
     o.glow = glow;
     return o;
 }

@@ -63,7 +63,7 @@ ps_out frag(vs_out i)
     float s = 1.0;
     if(pos.y > 0.0) {
         s = dot(n, float3(0.0, -1.0, 0.0))*0.5+0.5;
-        s = max(s-0.2, 0.0)*1.25;
+        s = max(s-0.1-pos.y*0.1, 0.0)*1.25;
     }
 
     ps_out r;

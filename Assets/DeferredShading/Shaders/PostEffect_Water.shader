@@ -145,21 +145,16 @@ ps_out frag(vs_out i)
         float f1 = max(1.0-abs(dot(n, eye))-0.5, 0.0)*2.0;
         float f2 = 1.0-abs(dot(i.normal, eye));
 
-        if(tcoord.x>1.0 || tcoord.x<0.0 || tcoord.y>1.0 || tcoord.y<0.0) {
-            r.color = 0.0;
+        float4 tp = SamplePosition(tcoord);
+        if(tp.y<0.0 || tp.w==0.0) {
+            r.color = SampleFrame(tcoord);
         }
         else {
-            float4 tp = SamplePosition(tcoord);
-            if(tp.y<0.0 || tp.w==0.0) {
-                r.color = SampleFrame(tcoord);
-            }
-            else {
-                r.color = SampleFrame(coord);
-            }
-            r.color *= 0.9;
-            r.color = r.color * max(1.0-adv*g_attenuation_by_distance, 0.0);
-            r.color += (f1 * f2) * g_fresnel * fade;
+            r.color = SampleFrame(coord);
         }
+        r.color *= 0.9;
+        r.color = r.color * max(1.0-adv*g_attenuation_by_distance, 0.0);
+        r.color += (f1 * f2) * g_fresnel * fade;
     }
     {
         float _RayMarchDistance = 1.0;
