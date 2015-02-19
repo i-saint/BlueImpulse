@@ -95,7 +95,7 @@ struct my_vs_out
 };
 
 float4 g_line_color;
-float4 g_sphere_center;
+float4 g_sphere;
 
 my_vs_out vert(appdata_full v)
 {
@@ -132,8 +132,8 @@ ps_out frag(my_vs_out i)
     glow += g_line_color * vg * 1.5;
 
     float extrude = dg.y*4.0 - 4.0 + dg.x*0.5;
-    float3 sphere_pos = g_sphere_center;
-    float sphere_radius = objtime*4.0 + extrude;
+    float3 sphere_pos = g_sphere.xyz;
+    float sphere_radius = g_sphere.w + extrude;
     float3 s_normal = normalize(_WorldSpaceCameraPos.xyz - i.position.xyz);
     float3 pos_rel = i.position.xyz - sphere_pos;
     float s_dist = abs(dot(pos_rel, s_normal));
@@ -160,7 +160,7 @@ ps_out frag(my_vs_out i)
         o.normal = float4(dir, _Gloss);
         o.position = float4(pos, spos.z);
     }
-    glow.rgb += float3(0.2, 0.2, 0.7) * max(1.0 - abs(dist_proj-sphere_radius), 0.0)*4.0;
+    glow.rgb += float3(0.2, 0.2, 0.7) * max(1.0 - abs(dist_proj-sphere_radius)*0.5, 0.0)*5.0;
 
 
     o.color = _BaseColor;

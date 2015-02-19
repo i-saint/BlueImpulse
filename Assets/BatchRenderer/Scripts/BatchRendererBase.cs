@@ -37,6 +37,7 @@ public abstract class BatchRendererBase : MonoBehaviour
     public int GetInstanceCount() { return m_instance_count; }
     public void SetInstanceCount(int v) { m_instance_count = v; }
 
+    public void EachMaterials(System.Action<Material> a) { m_materials.ForEach(a); }
 
 
     public virtual Material CloneMaterial(int nth)

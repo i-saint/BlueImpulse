@@ -45,6 +45,10 @@ public class CameraControl : MonoBehaviour
                 m_camera.transform.position = pos;
             }
         }
+    }
+
+    void LateUpdate()
+    {
         m_camera.transform.LookAt(m_look_target.position);
     }
 }

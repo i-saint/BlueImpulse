@@ -7,6 +7,8 @@ public class CubeRoutine : MonoBehaviour
     protected static int s_id_seed;
 
     public BatchCubeRenderer.InstanceData[] m_instances;
+    public Vector3 m_sphere_center;
+    public float m_sphere_radius;
     protected BatchCubeRenderer m_renderer;
 
 
@@ -29,5 +31,8 @@ public class CubeRoutine : MonoBehaviour
             m_instances[i].time += dt;
         }
         m_renderer.AddInstances(m_instances);
+        m_renderer.EachMaterials((m) => {
+            m.SetVector("g_sphere", new Vector4(m_sphere_center.x, m_sphere_center.y, m_sphere_center.z, m_sphere_radius));
+        });
     }
 }
