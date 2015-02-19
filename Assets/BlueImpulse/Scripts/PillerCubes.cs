@@ -11,26 +11,35 @@ public class PillerCubes : CubeRoutine
 
     public override void OnEnable()
     {
-        const int cubes_par_piller = 256;
-        m_instances = new BatchCubeRenderer.InstanceData[cubes_par_piller * 3];
-        m_imd = new IMD[cubes_par_piller * 3];
+        const int cubes_par_piller = 200;
+        const int num_pillers = 8;
+        m_instances = new BatchCubeRenderer.InstanceData[cubes_par_piller * num_pillers];
+        m_imd = new IMD[cubes_par_piller * num_pillers];
 
-        const float r = 8.0f;
-        Vector3[] base_pos = new Vector3[3] {
-            new Vector3(Mathf.Cos(  0.0f*Mathf.Deg2Rad), 0.0f, Mathf.Sin(  0.0f*Mathf.Deg2Rad))*r,
-            new Vector3(Mathf.Cos(120.0f*Mathf.Deg2Rad), 0.0f, Mathf.Sin(120.0f*Mathf.Deg2Rad))*r,
-            new Vector3(Mathf.Cos(240.0f*Mathf.Deg2Rad), 0.0f, Mathf.Sin(240.0f*Mathf.Deg2Rad))*r,
-        };
+        const float r1 = 9.0f;
+        const float r2 = 14.0f;
+        const float shift = 0.0f;
+        Vector3[] base_pos = new Vector3[num_pillers] {
+            new Vector3(Mathf.Cos((  0.0f+shift)*Mathf.Deg2Rad), 0.0f, Mathf.Sin((  0.0f+shift)*Mathf.Deg2Rad))*r1,
+            new Vector3(Mathf.Cos(( 90.0f+shift)*Mathf.Deg2Rad), 0.0f, Mathf.Sin(( 90.0f+shift)*Mathf.Deg2Rad))*r1,
+            new Vector3(Mathf.Cos((180.0f+shift)*Mathf.Deg2Rad), 0.0f, Mathf.Sin((180.0f+shift)*Mathf.Deg2Rad))*r1,
+            new Vector3(Mathf.Cos((270.0f+shift)*Mathf.Deg2Rad), 0.0f, Mathf.Sin((270.0f+shift)*Mathf.Deg2Rad))*r1,
 
-        for (int pi = 0; pi < 3; ++pi)
+            new Vector3(Mathf.Cos(( 45.0f+shift)*Mathf.Deg2Rad), 0.0f, Mathf.Sin(( 45.0f+shift)*Mathf.Deg2Rad))*r2,
+            new Vector3(Mathf.Cos((135.0f+shift)*Mathf.Deg2Rad), 0.0f, Mathf.Sin((135.0f+shift)*Mathf.Deg2Rad))*r2,
+            new Vector3(Mathf.Cos((225.0f+shift)*Mathf.Deg2Rad), 0.0f, Mathf.Sin((225.0f+shift)*Mathf.Deg2Rad))*r2,
+            new Vector3(Mathf.Cos((315.0f+shift)*Mathf.Deg2Rad), 0.0f, Mathf.Sin((315.0f+shift)*Mathf.Deg2Rad))*r2,
+    };
+
+        for (int pi = 0; pi < num_pillers; ++pi)
         {
             for (int ci = 0; ci < cubes_par_piller; ++ci)
             {
                 int i = cubes_par_piller * pi + ci;
                 const float rxz = 0.75f;
-                const float ry = 10.0f;
+                const float ry = 15.0f;
                 m_instances[i].translation = base_pos[pi] + new Vector3(Random.Range(-rxz, rxz), Random.Range(-ry, ry), Random.Range(-rxz, rxz));
-                m_instances[i].scale = Random.Range(0.4f, 0.9f);
+                m_instances[i].scale = Random.Range(0.5f, 1.1f);
                 m_imd[i].speed = Random.Range(0.25f, 1.0f);
             }
         }
@@ -43,9 +52,9 @@ public class PillerCubes : CubeRoutine
         {
             float y = m_instances[i].translation.y;
             y += Time.deltaTime * m_imd[i].speed;
-            if (y > 5.0f)
+            if (y > 15.0f)
             {
-                y -= 20.0f;
+                y -= 30.0f;
             }
             m_instances[i].translation.y = y;
         }

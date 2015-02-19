@@ -131,7 +131,7 @@ ps_out frag(my_vs_out i)
     float vg = max(0.0, frac(1.0-d*0.75-_Time.y*0.25)*3.0-2.0) * pc;
     glow += g_line_color * vg * 1.5;
 
-    float extrude = dg.y*4.0 - 4.0 + dg.x*0.5;
+    float extrude = dg.y*4.0 - 4.5 + dg.x*0.5;
     float3 sphere_pos = g_sphere.xyz;
     float sphere_radius = g_sphere.w + extrude;
     float3 s_normal = normalize(_WorldSpaceCameraPos.xyz - i.position.xyz);

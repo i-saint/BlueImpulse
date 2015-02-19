@@ -129,6 +129,7 @@ ps_out frag(vs_out i)
         int MaxMarch = 16;
         float adv = g_raymarch_step * jitter(i.world_pos.xyz);
         float3 refdir = normalize(-eye + -reflect(-eye, n.xyz)*g_refraction);
+        float4 reffragpos = 0.0;
         for(int k=0; k<MaxMarch; ++k) {
             adv = adv + g_raymarch_step;
             float4 tpos = mul(UNITY_MATRIX_VP, float4((i.world_pos+refdir*adv), 1.0) );
@@ -136,7 +137,7 @@ ps_out frag(vs_out i)
             #if UNITY_UV_STARTS_AT_TOP
                 tcoord.y = 1.0-tcoord.y;
             #endif
-            float4 reffragpos = SamplePosition(tcoord);
+            reffragpos = SamplePosition(tcoord);
             if(reffragpos.w!=0 && reffragpos.w<tpos.z) {
                 break;
             }
@@ -145,8 +146,7 @@ ps_out frag(vs_out i)
         float f1 = max(1.0-abs(dot(n, eye))-0.5, 0.0)*2.0;
         float f2 = 1.0-abs(dot(i.normal, eye));
 
-        float4 tp = SamplePosition(tcoord);
-        if(tp.y<0.0 || tp.w==0.0) {
+        if(reffragpos.y<0.0 || reffragpos.w==0.0) {
             r.color = SampleFrame(tcoord);
         }
         else {
