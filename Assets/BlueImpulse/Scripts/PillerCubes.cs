@@ -5,8 +5,11 @@ public class PillerCubes : CubeRoutine
 {
     public struct IMD
     {
+        public Vector3 initial_pos;
         public float speed;
     }
+    public float m_time;
+    float m_prev_time;
     IMD[] m_imd;
 
     public override void OnEnable()
@@ -38,9 +41,11 @@ public class PillerCubes : CubeRoutine
                 int i = cubes_par_piller * pi + ci;
                 const float rxz = 0.75f;
                 const float ry = 15.0f;
-                m_instances[i].translation = base_pos[pi] + new Vector3(Random.Range(-rxz, rxz), Random.Range(-ry, ry), Random.Range(-rxz, rxz));
-                m_instances[i].scale = Random.Range(0.5f, 1.1f);
+                Vector3 pos = base_pos[pi] + new Vector3(Random.Range(-rxz, rxz), Random.Range(-ry, ry), Random.Range(-rxz, rxz));
+                m_imd[i].initial_pos = pos;
                 m_imd[i].speed = Random.Range(0.25f, 1.0f);
+                m_instances[i].translation = pos;
+                m_instances[i].scale = Random.Range(0.5f, 1.1f);
             }
         }
         base.OnEnable();
@@ -48,10 +53,12 @@ public class PillerCubes : CubeRoutine
 
     public override void Update()
     {
+        float dt = m_time - m_prev_time;
+        m_prev_time = m_time;
         for (int i = 0; i < m_instances.Length; ++i )
         {
             float y = m_instances[i].translation.y;
-            y += Time.deltaTime * m_imd[i].speed;
+            y += dt * m_imd[i].speed;
             if (y > 15.0f)
             {
                 y -= 30.0f;
