@@ -119,6 +119,7 @@ ps_out frag(vs_out vo)
 ENDCG
 
     Pass {
+        Name "GBuffer"
         Cull Back
         ZWrite On
         ZTest LEqual
@@ -131,9 +132,10 @@ ENDCG
     }
     Pass {
         Name "DepthPrePass"
-        ColorMask 0
+        Cull Back
         ZWrite On
         ZTest Less
+        ColorMask 0
 
         CGPROGRAM
         #pragma vertex vert
@@ -145,7 +147,7 @@ ENDCG
         ENDCG
     }
     Pass {
-        Name "Shading"
+        Name "GBuffer"
         Cull Back
         ZWrite Off
         ZTest Equal

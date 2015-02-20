@@ -175,6 +175,7 @@ ps_out frag(my_vs_out i)
         Cull Back
         ZWrite On
         ZTest Less
+        ColorMask 0
 
         CGPROGRAM
         #pragma vertex vert

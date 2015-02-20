@@ -20,6 +20,7 @@ SubShader {
         Cull Back
         ZWrite On
         ZTest Less
+        ColorMask 0
 
         CGPROGRAM
         #pragma vertex vert
