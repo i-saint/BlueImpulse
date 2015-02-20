@@ -22,11 +22,12 @@ public class GPUParticleEmitter : MonoBehaviour
     }
 
     public GPUParticleWorld[] m_targets;
-    public int m_emit_count = 16;
+    public float m_emit_count = 100.0f;
     public Shape m_shape = Shape.Sphere;
     public Vector3 m_velosity_base = Vector3.zero;
     public float m_velosity_diffuse = 0.5f;
     CSParticle[] m_tmp_to_add;
+    float m_delta;
 
     void OnEnable()
     {
@@ -56,9 +57,14 @@ public class GPUParticleEmitter : MonoBehaviour
 
     void ActualUpdate()
     {
-        if(m_tmp_to_add==null || m_tmp_to_add.Length!=m_emit_count)
+        m_delta += Time.deltaTime * m_emit_count;
+        int n = (int)m_delta;
+        m_delta -= n;
+        if (n == 0) return;
+
+        if(m_tmp_to_add==null || m_tmp_to_add.Length!=n)
         {
-            m_tmp_to_add = new CSParticle[m_emit_count];
+            m_tmp_to_add = new CSParticle[n];
         }
 
         Vector3 pos = transform.position;
@@ -71,7 +77,7 @@ public class GPUParticleEmitter : MonoBehaviour
                 m_tmp_to_add[i].velocity = m_velosity_base + new Vector3(R(), R(), R()) * m_velosity_diffuse;
             }
         }
-        else if (m_shape == Shape.Sphere)
+        else if (m_shape == Shape.Box)
         {
             Vector3 s = transform.localScale;
             for (int i = 0; i < m_tmp_to_add.Length; ++i)
