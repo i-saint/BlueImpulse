@@ -3,6 +3,7 @@ using System.Collections;
 
 public class PillerCubes : CubeRoutine
 {
+    [System.Serializable]
     public struct IMD
     {
         public Vector3 initial_pos;
@@ -10,9 +11,9 @@ public class PillerCubes : CubeRoutine
     }
     public float m_time;
     float m_prev_time;
-    IMD[] m_imd;
+    public IMD[] m_imd;
 
-    public override void OnEnable()
+    public override void Generate()
     {
         const int cubes_par_piller = 200;
         const int num_pillers = 8;
@@ -48,7 +49,6 @@ public class PillerCubes : CubeRoutine
                 m_instances[i].scale = Random.Range(0.5f, 1.1f);
             }
         }
-        base.OnEnable();
     }
 
     public override void Update()

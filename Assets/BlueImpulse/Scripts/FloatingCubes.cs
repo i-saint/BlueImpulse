@@ -3,6 +3,7 @@ using System.Collections;
 
 public class FloatingCubes : CubeRoutine
 {
+    [System.Serializable]
     public struct IMD
     {
         public Vector3 axis1;
@@ -15,7 +16,7 @@ public class FloatingCubes : CubeRoutine
     }
     public float m_time;
     float m_prev_time;
-    IMD[] m_imd;
+    public IMD[] m_imd;
 
     float R(float r = 1.0f)
     {
@@ -23,7 +24,7 @@ public class FloatingCubes : CubeRoutine
     }
 
 
-    public override void OnEnable()
+    public override void Generate()
     {
         const int num = 64;
         m_instances = new BatchCubeRenderer.InstanceData[num];
@@ -37,8 +38,6 @@ public class FloatingCubes : CubeRoutine
             m_instances[i].scale = 0.5f + R(0.2f);
             m_instances[i].translation = new Vector3(R(3.0f), R(3.0f)+3.0f, R(3.0f));
         }
-
-        base.OnEnable();
     }
 
     public override void Update()

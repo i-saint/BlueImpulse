@@ -14,9 +14,12 @@ public class CubeRoutine : MonoBehaviour
 
     public int GenID() { return ++s_id_seed; }
 
+    public virtual void Generate() { }
+
     public virtual void OnEnable()
     {
         m_renderer = GetComponent<BatchCubeRenderer>();
+        Generate();
         for (int i = 0; i < m_instances.Length; ++i )
         {
             m_instances[i].id = GenID();

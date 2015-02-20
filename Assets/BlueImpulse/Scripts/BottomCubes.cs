@@ -17,7 +17,7 @@ public class BottomCubes : CubeRoutine
     public IMD[] m_imd;
 
 
-    public override void OnEnable()
+    public override void Generate()
     {
         const int w = 31;
         m_instances = new BatchCubeRenderer.InstanceData[w * w];
@@ -39,7 +39,6 @@ public class BottomCubes : CubeRoutine
                 m_instances[i].scale = 1.0f;
             }
         }
-        base.OnEnable();
     }
 
     public override void Update()
