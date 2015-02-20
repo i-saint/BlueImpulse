@@ -31,7 +31,7 @@ public class BottomCubes : CubeRoutine
                 Vector3 pos = new Vector3(1.1f * xi - 16.1f, Random.Range(-2.0f, 0.0f) - 0.7f, 1.1f * zi - 16.1f);
                 float d = Mathf.Sqrt(pos.x * pos.x + pos.z * pos.z);
                 m_imd[i].base_pos = pos;
-                m_imd[i].up = -10.0f - Mathf.Max(5.0f - d * 1.0f, 0.0f);
+                m_imd[i].up = -10.0f - Mathf.Max(10.0f - d * 1.5f, 0.0f);
                 m_imd[i].random = Random.Range(-1.0f, 1.0f);
                 pos.y += m_imd[i].up + (-d * 0.1f);
                 m_instances[i].translation = pos;
@@ -49,7 +49,7 @@ public class BottomCubes : CubeRoutine
         {
             if (m_imd[i].up < 0.0)
             {
-                float u = Mathf.Max(-dt, m_imd[i].up);
+                float u = Mathf.Max(-dt*1.25f, m_imd[i].up);
                 m_imd[i].up -= u;
                 m_instances[i].translation.y -= u;
             }
