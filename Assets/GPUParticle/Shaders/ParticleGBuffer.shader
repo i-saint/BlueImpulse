@@ -8,6 +8,7 @@ Properties {
     _HeatIntensity ("HeatIntensity", Float) = 1.0
     _Scale ("Scale", Float) = 1.0
     _FadeTime ("FadeTime", Float) = 0.1
+    _Spin ("Spin", Float) = 1.0
 }
 SubShader {
     Tags { "RenderType"="Opaque" }
@@ -24,6 +25,7 @@ float _HeatThreshold;
 float _HeatIntensity;
 float _Scale;
 float _FadeTime;
+float _Spin;
 
 struct Vertex
 {
@@ -56,15 +58,40 @@ struct ps_out
     float4 glow : COLOR3;
 };
 
+
+float4x4 rotation_matrix(float3 axis, float angle)
+{
+    axis = normalize(axis);
+    float s = sin(angle);
+    float c = cos(angle);
+    float oc = 1.0 - c;
+    
+    return float4x4(
+        oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
+        oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
+        oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
+        0.0,                                0.0,                                0.0,                                1.0);
+}
+
 vs_out vert(ia_out io)
 {
+    float pid = (float)particles[io.instanceID].id;
     float lifetime = particles[io.instanceID].lifetime;
     float scale = _Scale * min(lifetime/_FadeTime, 1.0);
+    float speed = particles[io.instanceID].speed;
 
-    float3 ipos = particles[io.instanceID].position;
-    float4 v = float4(vertices[io.vertexID].position*scale+ipos, 1.0);
-    if(lifetime<=0.0) { v=0.0; }
+    float3 position = particles[io.instanceID].position;
+    float4 v = float4(vertices[io.vertexID].position, 1.0);
     float4 n = float4(vertices[io.vertexID].normal, 0.0);
+    if(lifetime<=0.0) { v=0.0; }
+    if(_Spin != 0.0) {
+        float ang = _Spin * lifetime;
+        float4x4 rot = rotation_matrix(normalize(iq_rand(float3(pid, pid*123.45, pid*543.21))), ang);
+        v = mul(rot, v);
+        n = mul(rot, n);
+    }
+    v.xyz *= scale;
+    v.xyz += position;
     float4 vp = mul(UNITY_MATRIX_VP, v);
 
     vs_out o;
@@ -74,7 +101,6 @@ vs_out vert(ia_out io)
     o.normal.xyz = normalize(n.xyz);
     o.normal.w = 1.0;
 
-    float speed = particles[io.instanceID].speed;
     float heat = max(speed-_HeatThreshold, 0.0) * _HeatIntensity;
     o.emission = _GlowColor + _HeatColor * heat;
     o.emission.w = lifetime;
