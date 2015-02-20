@@ -15,6 +15,7 @@ public class FloatingCubes : CubeRoutine
         public float speed;
     }
     public float m_time;
+    public float m_rotation;
     float m_prev_time;
     public IMD[] m_imd;
 
@@ -23,20 +24,39 @@ public class FloatingCubes : CubeRoutine
         return Random.Range(-r, r);
     }
 
+    Vector3 RV()
+    {
+        return new Vector3(R(), R(), R()).normalized;
+    }
+
 
     public override void Generate()
     {
-        const int num = 64;
-        m_instances = new BatchCubeRenderer.InstanceData[num];
-        m_imd = new IMD[num];
-        for (int i = 0; i < num; ++i )
+        const int c1 = 32;
+        const int c2 = 256;
+        m_instances = new BatchCubeRenderer.InstanceData[c1 + c2];
+        m_imd = new IMD[c1 + c2];
+        for (int i = 0; i < c1; ++i)
         {
-            m_imd[i].axis1 = new Vector3(R(), R(), R()).normalized;
-            m_imd[i].axis2 = new Vector3(R(), R(), R()).normalized;
+            m_imd[i].axis1 = RV();
+            m_imd[i].axis2 = RV();
             m_imd[i].rot_speed1 = Random.Range(0.25f, 1.5f) * 20.0f;
             m_imd[i].rot_speed2 = Random.Range(0.25f, 1.5f) * 20.0f;
+            m_imd[i].speed = R(10.0f);
             m_instances[i].scale = 0.5f + R(0.2f);
-            m_instances[i].translation = new Vector3(R(3.0f), R(3.0f)+3.0f, R(3.0f));
+            m_instances[i].translation = RV() * Random.Range(2.5f, 4.0f);
+            m_instances[i].translation.y += 2.0f;
+        }
+        for (int i = c1; i < c1+c2; ++i)
+        {
+            m_imd[i].axis1 = RV();
+            m_imd[i].axis2 = RV();
+            m_imd[i].rot_speed1 = Random.Range(0.25f, 1.5f) * 20.0f;
+            m_imd[i].rot_speed2 = Random.Range(0.25f, 1.5f) * 20.0f;
+            m_imd[i].speed = R(2.5f);
+            m_instances[i].scale = 1.0f + R(0.5f);
+            m_instances[i].translation = RV() * (17.0f + R(5.0f));
+            m_instances[i].translation.y += 5.0f;
         }
     }
 
@@ -50,6 +70,7 @@ public class FloatingCubes : CubeRoutine
             m_imd[i].rot2 += m_imd[i].rot_speed2*dt;
             Quaternion r = Quaternion.AngleAxis(m_imd[i].rot1, m_imd[i].axis1) * Quaternion.AngleAxis(m_imd[i].rot2, m_imd[i].axis2);
             m_instances[i].rotation = r;
+            m_instances[i].translation = Quaternion.AngleAxis(m_rotation * dt * m_imd[i].speed, Vector3.up) * m_instances[i].translation;
         }
         base.Update();
     }

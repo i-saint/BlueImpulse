@@ -45,6 +45,7 @@ public class BottomCubes : CubeRoutine
     {
         float dt = m_time - m_prev_time;
         m_prev_time = m_time;
+        Debug.Log(dt);
         for (int i = 0; i < m_instances.Length; ++i)
         {
             if (m_imd[i].up < 0.0)
