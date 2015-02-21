@@ -75,6 +75,16 @@ public class GPUParticleTrailRenderer : MonoBehaviour
         m_buf_trail_params.Release();
     }
 
+    void LateUpdate()
+    {
+        if (m_first)
+        {
+            m_first = false;
+            DispatchTrailKernel(0);
+        }
+        DispatchTrailKernel(1);
+    }
+
     void DispatchTrailKernel(int i)
     {
         if (!enabled || !m_pw.enabled || Time.deltaTime == 0.0f) return;
@@ -98,12 +108,6 @@ public class GPUParticleTrailRenderer : MonoBehaviour
     {
         if (!enabled || !m_pw.enabled || m_mat_trail == null) return;
 
-        if (m_first)
-        {
-            m_first = false;
-            DispatchTrailKernel(0);
-        }
-        DispatchTrailKernel(1);
         m_mat_trail.SetBuffer("particles", m_pw.GetParticleBuffer());
         m_mat_trail.SetBuffer("params", m_buf_trail_params);
         m_mat_trail.SetBuffer("vertices", m_buf_trail_vertices);

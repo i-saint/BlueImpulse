@@ -117,6 +117,11 @@ my_vs_out vert(appdata_full v)
     return o;
 }
 
+float4 frag_depth(my_vs_out i) : SV_TARGET
+{
+    return 0.0;
+}
+
 ps_out frag(my_vs_out i)
 {
     float objid = i.params.x;

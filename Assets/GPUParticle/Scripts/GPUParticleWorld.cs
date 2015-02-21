@@ -248,6 +248,7 @@ public class GPUParticleWorld : MonoBehaviour
             GPUParticleColliderBase.UpdateAll();
         }
 
+        m_world_data[0].timestep = Time.deltaTime * 0.6f;
         m_world_data[0].particle_size = m_particle_radius;
         m_world_data[0].particle_lifetime = m_lifetime;
         m_world_data[0].num_sphere_colliders = m_sphere_colliders.Count;

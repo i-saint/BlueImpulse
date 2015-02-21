@@ -13,10 +13,12 @@ public class OuterCubes : CubeRoutine
         public float rot1;
         public float rot2;
         public float speed;
+        public float base_y;
     }
     public float m_time;
     public float m_rotation;
     float m_prev_time;
+    Vector3 m_axis;
     public IMD[] m_imd;
 
     float R(float r = 1.0f)
@@ -35,6 +37,10 @@ public class OuterCubes : CubeRoutine
         const int c1 = 200;
         m_instances = new BatchCubeRenderer.InstanceData[c1];
         m_imd = new IMD[c1];
+
+        Quaternion r = Quaternion.AngleAxis(8.0f, Vector3.forward);
+        m_axis = r * Vector3.up;
+
         for (int i = 0; i < c1; ++i)
         {
             m_imd[i].axis1 = RV();
@@ -44,10 +50,11 @@ public class OuterCubes : CubeRoutine
             m_imd[i].rot1 = R(360.0f);
             m_imd[i].rot2 = R(360.0f);
             m_imd[i].speed = R(1.0f)+4.0f;
+            m_imd[i].base_y = 1.5f + R(1.25f);
             m_instances[i].scale = 0.75f + R(0.1f);
 
-            m_instances[i].translation = new Vector3(R(), 0.0f, R()).normalized * (12.0f + R(1.25f));
-            m_instances[i].translation.y += 1.5f + R(1.25f);
+            m_instances[i].translation = r * new Vector3(R(), 0.0f, R()).normalized * (12.0f + R(1.25f));
+            m_instances[i].translation.y += m_imd[i].base_y;
         }
     }
 
@@ -61,7 +68,9 @@ public class OuterCubes : CubeRoutine
             m_imd[i].rot2 += m_imd[i].rot_speed2 * m_rotation * dt;
             Quaternion r = Quaternion.AngleAxis(m_imd[i].rot1, m_imd[i].axis1) * Quaternion.AngleAxis(m_imd[i].rot2, m_imd[i].axis2);
             m_instances[i].rotation = r;
-            m_instances[i].translation = Quaternion.AngleAxis(m_rotation * dt * m_imd[i].speed, Vector3.up) * m_instances[i].translation;
+            m_instances[i].translation.y -= m_imd[i].base_y;
+            m_instances[i].translation = Quaternion.AngleAxis(m_rotation * dt * m_imd[i].speed, m_axis) * m_instances[i].translation;
+            m_instances[i].translation.y += m_imd[i].base_y;
         }
         base.Update();
     }
