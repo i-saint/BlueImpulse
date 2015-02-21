@@ -246,12 +246,13 @@ public struct CSSPHParams
 
 public struct CSTrailParams
 {
-    public const int size = 28;
+    public const int size = 32;
 
     public float delta_time;
     public float width;
     public int max_entities;
     public int max_history;
+    public float interval;
     public Vector3 camera_position;
 };
 

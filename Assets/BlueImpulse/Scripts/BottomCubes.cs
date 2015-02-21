@@ -53,7 +53,7 @@ public class BottomCubes : CubeRoutine
                 m_imd[i].up -= u;
                 m_instances[i].translation.y -= u;
             }
-            m_instances[i].translation.y += Mathf.Sin(m_imd[i].random * Mathf.PI + m_instances[i].time*0.4f) * 0.002f;
+            m_instances[i].translation.y += Mathf.Sin(m_imd[i].random * Mathf.PI + m_instances[i].time*0.4f) * 0.0015f;
         }
         base.Update();
     }

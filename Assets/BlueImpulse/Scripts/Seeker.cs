@@ -46,8 +46,6 @@ public class Seeker : MonoBehaviour
                 a.Play(si.nameHash, 0, m_time / si.length);
             }
         }
-
-        Debug.Log("seek " + m_time);
     }
 
     void OnValidate()

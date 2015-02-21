@@ -157,6 +157,7 @@ struct TrailParams
     float width;
     uint max_entities;
     uint max_history;
+    float interval;
     float3 camera_position;
 };
 

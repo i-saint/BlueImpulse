@@ -14,6 +14,7 @@ public class GPUParticleTrailRenderer : MonoBehaviour
 {
     public Camera[] m_camera;
     public int m_trail_max_history = 32;
+    public float m_samples_per_second = 30.0f;
     public float m_width = 0.1f;
     public ComputeShader m_cs_trail;
     public Material m_mat_trail;
@@ -92,6 +93,7 @@ public class GPUParticleTrailRenderer : MonoBehaviour
         m_tmp_params[0].delta_time = Time.deltaTime;
         m_tmp_params[0].max_entities = m_max_entities;
         m_tmp_params[0].max_history = m_trail_max_history;
+        m_tmp_params[0].interval = 1.0f / m_samples_per_second;
         m_tmp_params[0].camera_position = Camera.current != null ? Camera.current.transform.position : Vector3.zero;
         m_tmp_params[0].width = m_width;
         m_buf_trail_params.SetData(m_tmp_params);

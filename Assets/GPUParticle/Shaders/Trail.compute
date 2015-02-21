@@ -54,9 +54,15 @@ void Update(uint3 dtid : SV_DispatchThreadID)
         entities[eid].frame = 0;
     }
 
-    int f = entities[eid].frame % max_history;
+    entities[eid].time += params[0].delta_time;
+    if(entities[eid].time < params[0].interval) {
+        return;
+    }
+    entities[eid].time -= params[0].interval;
+    uint frame = entities[eid].frame++;
+    int f = frame % max_history;
+
     history[hi + f].position = ppos;
-    entities[eid].frame++;
     f = (f+1) % max_history;
 
     float3 camera = params[0].camera_position;
