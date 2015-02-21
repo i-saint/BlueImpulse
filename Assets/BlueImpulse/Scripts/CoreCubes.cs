@@ -7,4 +7,13 @@ public class CoreCubes : CubeRoutine
     {
         base.Update();
     }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.white;
+        for (int i = 0; i < m_instances.Length; ++i )
+        {
+            Gizmos.DrawWireCube(m_instances[i].translation, Vector3.one*m_instances[i].scale);
+        }
+    }
 }

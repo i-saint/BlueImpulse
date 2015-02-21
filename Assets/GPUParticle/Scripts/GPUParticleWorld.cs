@@ -54,7 +54,7 @@ public class GPUParticleWorld : MonoBehaviour
     public int m_world_div_y = 1;
     public int m_world_div_z = 256;
     public float m_lifetime = 20.0f;
-    public float m_decelerate = 0.99f;
+    public float m_damping = 0.6f;
     public float m_advection = 0.5f;
     public float m_pressure_stiffness = 500.0f;
     public float m_wall_stiffness = 1000.0f;
@@ -139,6 +139,16 @@ public class GPUParticleWorld : MonoBehaviour
         m_cs_core = AssetDatabase.LoadAssetAtPath("Assets/GPUParticle/Shaders/ParticleCore.compute", typeof(ComputeShader)) as ComputeShader;
         m_cs_sort = AssetDatabase.LoadAssetAtPath("Assets/GPUParticle/Shaders/BitonicSort.compute", typeof(ComputeShader)) as ComputeShader;
         m_cs_hashgrid = AssetDatabase.LoadAssetAtPath("Assets/GPUParticle/Shaders/HashGrid.compute", typeof(ComputeShader)) as ComputeShader;
+    }
+
+    void OnValidate()
+    {
+        int border = 8192;
+        while (m_max_particles > border)
+        {
+            border *= 2;
+        }
+        m_max_particles = border;
     }
 #endif // UNITY_EDITOR
 
@@ -255,7 +265,7 @@ public class GPUParticleWorld : MonoBehaviour
         m_world_data[0].num_capsule_colliders = m_capsule_colliders.Count;
         m_world_data[0].num_box_colliders = m_box_colliders.Count;
         m_world_data[0].num_forces = m_forces.Count;
-        m_world_data[0].decelerate = m_decelerate;
+        m_world_data[0].damping = m_damping;
         m_world_data[0].advection = m_advection;
         m_world_data[0].coord_scaler = m_coord_scaler;
         m_world_data[0].pressure_stiffness = m_pressure_stiffness;

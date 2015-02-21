@@ -142,7 +142,7 @@ public struct CSWorldData
     public float particle_lifetime;
     public float wall_stiffness;
     public float pressure_stiffness;
-    public float decelerate;
+    public float damping;
     public float advection;
     public int num_max_particles;
     public int num_additional_particles;
@@ -169,7 +169,7 @@ public struct CSWorldData
         particle_lifetime = 20.0f;
         wall_stiffness = 3000.0f;
         pressure_stiffness = 500.0f;
-        decelerate = 0.99f;
+        damping = 0.6f;
         advection = 0.5f;
 
         num_max_particles = 0;
