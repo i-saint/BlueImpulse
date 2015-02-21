@@ -62,6 +62,10 @@ public class OuterCubes : CubeRoutine
     {
         float dt = m_time - m_prev_time;
         m_prev_time = m_time;
+
+        Quaternion ar = Quaternion.AngleAxis(m_rotation*0.1f*dt, Vector3.forward);
+        m_axis = ar * m_axis;
+
         for (int i = 0; i < m_instances.Length; ++i)
         {
             m_imd[i].rot1 += m_imd[i].rot_speed1 * m_rotation * dt;
