@@ -44,6 +44,7 @@ public class Root : MonoBehaviour
             m_audio_source.enabled = false;
         }
 
+#if UNITY_STANDALONE
         m_dsr = GetComponentsInChildren<DSRenderer>();
         foreach(var dsr in m_dsr)
         {
@@ -60,6 +61,7 @@ public class Root : MonoBehaviour
                     break;
             }
         }
+#endif // UNITY_STANDALONE
     }
 
     void Update()
