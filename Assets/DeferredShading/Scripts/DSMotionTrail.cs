@@ -11,7 +11,11 @@ public class DSMotionTrail : MonoBehaviour
     void Start()
     {
         property_block = new MaterialPropertyBlock();
+#if UNITY_4_3
+        property_block.AddMatrix("prev_Object2World", Matrix4x4.identity);
+#else
         property_block.SetMatrix("prev_Object2World", Matrix4x4.identity);
+#endif
         mesh_renderer = GetComponent<MeshRenderer>();
         mesh_renderer.SetPropertyBlock(property_block);
     }
@@ -37,7 +41,11 @@ public class DSMotionTrail : MonoBehaviour
             prevObjToWorld[i] = prevObjToWorld[i - 1];
         }
         prevObjToWorld[0] = transform.localToWorldMatrix;
+#if UNITY_4_3
+        property_block.AddMatrix("prev_Object2World", prevObjToWorld[last]);
+#else
         property_block.SetMatrix("prev_Object2World", prevObjToWorld[last]);
+#endif
         mesh_renderer.SetPropertyBlock(property_block);
     }
 }

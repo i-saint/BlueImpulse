@@ -48,7 +48,7 @@ public class DSInstanceRenderer : MonoBehaviour
     {
         s_instance = this;
         DSRenderer dsr = GetComponent<DSRenderer>();
-        if (dsr == null) dsr = GetComponentInParent<DSRenderer>();
+        if (dsr == null) dsr = GetComponent<Transform>().GetComponent<DSRenderer>();
         if (m_depth_prepass == null)
         {
             m_depth_prepass = DepthPrePass;

@@ -92,7 +92,7 @@ vs_out vert(ia_out io)
     }
     v.xyz *= scale;
     v.xyz += position;
-    float4 vp = mul(UNITY_MATRIX_VP, v);
+    float4 vp = mul(UNITY_MATRIX_MVP, v);
 
     vs_out o;
     o.vertex = vp;

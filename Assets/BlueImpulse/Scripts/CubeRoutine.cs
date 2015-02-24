@@ -20,6 +20,10 @@ public class CubeRoutine : MonoBehaviour
     {
         m_renderer = GetComponent<BatchCubeRenderer>();
         Generate();
+        if (m_instances == null)
+        {
+            m_instances = new BatchCubeRenderer.InstanceData[0];
+        }
         for (int i = 0; i < m_instances.Length; ++i )
         {
             m_instances[i].id = GenID();

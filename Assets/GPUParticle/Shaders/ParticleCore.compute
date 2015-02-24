@@ -548,7 +548,7 @@ void Integrate(uint3 dtid : SV_DispatchThreadID)
     float3 ppos = particles[tid].position;
     float3 pvel = particles[tid].velocity + (pimd[tid].accel * wd.timestep);
     float speed = length(pvel);
-    pvel *= pow(wd.damping, wd.timestep);
+    pvel *= pow(abs(wd.damping), wd.timestep);
     ppos += pvel * wd.timestep;
     ppos *= wd.coord_scaler;
 

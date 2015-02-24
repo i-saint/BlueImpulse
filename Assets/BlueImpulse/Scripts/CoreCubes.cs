@@ -10,6 +10,8 @@ public class CoreCubes : CubeRoutine
 
     void OnDrawGizmos()
     {
+        if (m_instances == null) return;
+
         Gizmos.color = Color.white;
         for (int i = 0; i < m_instances.Length; ++i )
         {

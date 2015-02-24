@@ -76,7 +76,6 @@ void ApplyInstanceTransform(float2 id, inout float4 vertex, inout float3 normal)
         float3x3 rot = quaternion_to_matrix33(GetInstanceRotation(instance_id));
         vertex.xyz = mul(rot, vertex.xyz);
         normal.xyz = mul(rot, normal.xyz);
-        //tangent.xyz = mul(rot, tangent.xyz);
     }
     vertex.xyz += GetInstanceTranslation(instance_id);
 }
@@ -107,7 +106,7 @@ my_vs_out vert(appdata_full v)
 
     ApplyInstanceTransform(v.texcoord1.xy, v.vertex, v.normal);
 
-    float4 vmvp = mul(UNITY_MATRIX_VP, v.vertex);
+    float4 vmvp = mul(UNITY_MATRIX_MVP, v.vertex);
     o.vertex = vmvp;
     o.screen_pos = vmvp;
     o.position = v.vertex;
