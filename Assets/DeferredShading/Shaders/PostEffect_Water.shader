@@ -164,7 +164,7 @@ ps_out frag(vs_out i)
         #if UNITY_UV_STARTS_AT_TOP
             tcoord.y = 1.0-tcoord.y;
         #endif
-        //r.color.xyz += tex2D(g_frame_buffer, tcoord).xyz * g_reflection_intensity * fade;
+        r.color.xyz += tex2D(g_frame_buffer, tcoord).xyz * g_reflection_intensity * fade;
     }
     //r.color.rgb = pow(n*0.5+0.5, 4.0);
     return r;
